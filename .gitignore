@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: zlib-acknowledgement
+
+*
+
+!.gitignore
+!README.md
+!LICENSE
+
+!misc/
+!misc/**/*
+
+!code/
+!code/red
+!code/**/*.[chs]
+!code/**/*.ld
+
+!tests/
+!tests/**/*.[ch]
+
+!work/
+!work/.gdbinit
