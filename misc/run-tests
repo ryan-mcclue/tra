@@ -12,12 +12,12 @@ done
 
 # NOTE(Ryan): QEMU variants:
 #   1. Qemu user is for linux arm binaries (defaults cortex-a)
-#    > qemu-arm -g 1234 build/tra
+#    > qemu-arm -S -g 1234 build/tra
 #   2. Supports baremetal
-#    > qemu-system-arm -machine raspi2 -g 1234 build/tra
+#    > qemu-system-arm -S -machine raspi2 -g 1234 build/tra
 #   3. Old version of qemu, however supports more stm32 boards
-#    > qemu-system-gnuarmeclipse -gdb tcp::1234 --nographic --no-reboot \
+#    > qemu-system-gnuarmeclipse -S -gdb tcp::1234 --nographic --no-reboot \
 #     --board STM32F4-Discovery --mcu STM32F429ZI \
-#     --semihosting-config enable=on,target=native --image "build/tem" 
+#     --semihosting-config enable=on,target=native --image "build/test-tem.elf" 
 # To Debug:
-#    > arm-none-eabi-gdb -q --nh -ex 'file build/tra' -ex 'target remote localhost:1234'
+#    > arm-none-eabi-gdb -q --nh -ex 'file build/test-tem.elf' -ex 'target remote localhost:1234'
