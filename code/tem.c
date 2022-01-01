@@ -48,7 +48,7 @@ typedef float V2 __attribute__((vector_size(8)));
   //   1. MCU internal clock, say 6MHz. Known as HSI
   //   2. Board external crystal, say 8MHz. Known as HSE (often chosen as more accurate; less thermal)
   //   3. PLL + HSI/HSE
-  //   4. Clock input pin, i.e. feed clock signal from another MCU into this MCU
+  //   4. Clock input pin (MCO), i.e. feed clock signal from another MCU into this MCU
   // The SYSCLK is the combination of the previous. It's an intermediarey clock that feeds:
   //   1. HCLK (AHB bus, core, memory, DMA)
   //   2. PCLK (APB bus)
@@ -56,12 +56,13 @@ typedef float V2 __attribute__((vector_size(8)));
   // PLL_M + PLL_N + PLL_P can be fed HSI or HSE before SYSCLK
   
   // Clock may be configured automatically in system.c
-  // Inspect rcc.c for further information
+  // Inspect rcc.c for startup/default information.
 
   // systick is timer specific to cortex-m4
 
   // __disable_irq() intrinsic. use in error handlers?
 
+#if 0
   // NOTE(Ryan): AHB1 speed currently 16MHz
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
@@ -84,6 +85,12 @@ typedef float V2 __attribute__((vector_size(8)));
 
   bool gpio_button_was_down = false;
 
+  // Interrupts are generally more efficient. Response time-critical. Allow for power saving.
+  // Not hitting bus as hard which might interfere with other bus masters, e.g. DMA
+  
+  // Polling when duration of operation specific, e.g. sending out 50us pulse
+  // If high throughput, e.g 30000 times a second, context switch will be too much (i-cache, d-cache?)
+
   while (1)
   {
     bool gpio_button_is_down = (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_0) == GPIO_PIN_SET);
@@ -101,6 +108,7 @@ typedef float V2 __attribute__((vector_size(8)));
     }
 
   }
+#endif
 
   return 0;
 }

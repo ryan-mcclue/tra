@@ -17,7 +17,8 @@
  *
  * 3. USART TX:
  *   - Identify USART: 
- *     1. Connected to virtual COM port via on-board FTDI chip and build machine RS232 driver (/dev/ttyACMx)
+ *     1. Connected to virtual COM port via on-board FTDI chip 
+ *     and build machine RS232 driver (/dev/ttyACMx)
  *     2. UART pins to connect USB-to-TTL serial cable (/dev/ttyUSBx)
  *     3. Flying-wires (solder from MCU pin to board pin)
  *   - Enable appropriate gpio pins to alternate function and apply usart function
@@ -151,7 +152,7 @@ usart(void)
   }
 }
 
-void USART3_IRQHandler(void) // cmsis startup
+void USART3_IRQHandler(void) // cmsis startup (a weak symbol)
 {
   if (USART_GetITStatus(USART3, USART_IT_RXNE))
   {

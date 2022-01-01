@@ -3,5 +3,6 @@
 
 # IMPORTANT(Ryan): TEST_FILE_NAME is set by wrapper script run-tests
 TEST_FILE_NAME="build/test-tem.elf"
-qemu-system-gnuarmeclipse --nographic --no-reboot --board STM32F4-Discovery --mcu STM32F429ZI \
+qemu-system-gnuarmeclipse --nographic --no-reboot \
+    --board STM32F4-Discovery --mcu STM32F429ZI \
     --semihosting-config enable=on,target=native --image "${TEST_FILE_NAME}" 

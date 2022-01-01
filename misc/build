@@ -44,9 +44,13 @@ simulator_flags="
   --specs=rdimon.specs -lc -lm -lrdimon
 "
 
+# export GCOV_PREFIX="$HOME/prog/personal/tra/build"
+# just add --coverage?
+# lcov --capture --directory project-dir --output-file coverage.info
+# -fprofile-arcs -ftest-coverage
 test_flags="
   -DTRA_TESTING
-  ${simulator_flags}
+  $simulator_flags
 "
 
 common_flags="
