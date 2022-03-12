@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: zlib-acknowledgement
 
-// IMPORTANT(Ryan): Assuming both binaries have vendor linker.ld and startup.s
+// TODO(Ryan): Investigate youtubers ali challenger and later bitluni (use cheap stm32 boards indicated by edwin fairchild youtuber)
+
+// TODO(Ryan): Inside of jlink debugger, know how to inspect flash memory contents of the board
+
+// TODO(Ryan): How is an OTA update any different to a normal wireless update? I think just general term not specific to protocol in use
+// Typically will various packet formats for OTA:
+// data, start, end, header, response
+
+// IMPORTANT(Ryan): Assuming both binaries have vendor linker.ld and startup.s/system.c
 
 #define MAJOR 0 
 #define MINOR 1 
@@ -11,6 +19,19 @@ main(void)
 {
   uart_printf("Bootloader loading");
   toggle_board_led();
+
+  while (tick < three_second_tick)
+  {
+    if (button_down)
+    {
+      // wait for an approriate signal (e.g. usart) to start copying new firmware
+      // so, the data transfer of the new firmware is initiated from an external program 
+      
+      // TODO(Ryan): Investigate further bootloader functionality from https://www.youtube.com/watch?v=DMHwB4PLfW0  
+
+      hal_nvic_systemreset(); // to load the new update
+    }
+  }
   
   goto_application();
 }
