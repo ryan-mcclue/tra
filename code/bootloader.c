@@ -71,3 +71,11 @@ main(void)
 {
   uart_printf("Application version (%d).(%d)", version[0], version[1]);
 }
+
+
+// To view the actual STM32 bootloader (stored in system ROM, as oppose to our own which takes us space in user flash)
+// look at AN2606 Application Note pdf file, AN3155
+// To switch to internal bootloader have to set boot pin; so how does this software coordinate flashing?
+// hard reset is cutting power
+
+// by removing the jumpers, typically shorting a particular pin to high or ground   
