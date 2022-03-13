@@ -8,4 +8,8 @@
  * interrupts can be disabled (at this time all further ISRs are pending and resolved based on priority) when in ISR and reenabled on exit.
  * TODO: What determines interrupt priority?
  * 
+ * displays are commonly used in embedded systems that are not battery operated as consume a lot of power
+ *
+ * qfsm tool for creating state machines?
+ *
  */

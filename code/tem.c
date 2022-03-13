@@ -2,6 +2,22 @@
 
 #include <stdbool.h>
 
+// the interrupt handler will increment this by the set resolution
+int timestamp = 0; // elapsed time
+void
+timer_init(void)
+{
+  int clocks_per_tick = __CORE_CLK / 100; // this is our resolution; calculate with 1/f
+  // load = clocks_per_tick; assign tick rate
+  // fire interrupt when hit
+  timestamp = 0;
+}
+
+// NOTE(Ryan): Often there is a VTOR register which we can use to add an interrupt handler
+// outside of the startup file, isr_vector = (* long)SCB->VTOR; isr_vector[15] = handler;
+
+
+
 #include "stm32f4xx_hal_gpio.c"
 
 typedef float V2 __attribute__((vector_size(8)));

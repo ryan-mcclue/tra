@@ -13,12 +13,32 @@ extern void qemu_arm_exit(void);
 
 extern int testable_main(void);
 
+// A 'spike' is explorative code. Best to put in a separate branch.
+
+/*
+ * REFACTORING FOR INTERACTION TESTABILITY:
+ * · Driver initialisation (init_drivers()) --> testing init_drivers() expect_init_gpio() etc.
+ * · Main loop in executor function that returns true (so we can sleep or reset) 
+ *
+ * · For a collection of related ports (e.g. gpio leds), 
+ *   have a function to return a bitmask of whether they are on (so create a file for them).
+ *   So, a bitmask setter and getter
+ * · Use enums to map to related port numbers, e.g. LED0, LED1
+ */
+
+// #include "mock-led.c"
+
+// For testing main function, just lay out what functions you expect to be called? 
 void
 test_tem(void **state)
 {
-  // LED_Init_Expect(); something to do with mocking?
-  //expect_function_call();
-  //function_called();
+  // init_drivers_Expect()
+  //
+  // tem_exec_ExpectAndReturn(TRUE);
+  // tem_exec_ExpectAndReturn(TRUE);
+  // tem_exec_ExpectAndReturn(FALSE);
+  assert_int_equal(testable_main(), 0);
+
   // this won't be flexible to function name changes......
   //
   // checking if led is on is really just checking register states
@@ -35,7 +55,6 @@ test_tem(void **state)
   //
   // gcc --Wl,--wrap=func; now have __wrap_func() and __real_func()
 
-  assert_int_equal(testable_main(), 0);
 }
 
 int 
