@@ -337,7 +337,7 @@ static int connect_device(GDBusConnection *conn,
   if (error != NULL || res == NULL)
   {
     if (connect)
-      g_print("  connection failed\n");
+      g_print("  connection failed (%s)\n", error->message);
     else g_print("  disconnection failed\n");
 
     return -1;

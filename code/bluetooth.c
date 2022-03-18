@@ -1,42 +1,81 @@
 // SPDX-License-Identifier: zlib-acknowledgement
 
+// TODO(Ryan): Investigate how to power board externally through Vin 
+
+// IMPORTANT(Ryan): First thing to get an overview is to look at board pinout. Basically everything is user-configurable IO
+
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 
 // dbus formalise IPC with discrete packet sizes as oppose to byte streams with say pipes 
-#include <dbus/dbus.h>
+
+// for wifi, use esp8266?
+// bluetooth, hm-10? require gatt profiles? FTDI chip could convert serial to USB, i.e. give us a COM port on the pc
+
+// we want to know the baud and protocol of the bluetooth module so as to configure the UART pins on the STM32 to match
+
+// #include <dbus/dbus.h>
+
+#include <glib.h>
+#include <gio/gio.h>
+
+
+void on_remote_device_detection(GDBusConnection* connection,
+                                const gchar* sender_name,
+                                const gchar* object_path,
+                                const gchar* interface_name,
+                                const gchar* signal_name,
+                                GVariant* parameters,
+                                gpointer user_data)
+{
+  if (strcmp(object_path, adapter_object_path) == 0) return;
+
+  if 
+}
 
 int
 main(int argc, char *argv[])
 {
-  int dev_id = hci_get_route(NULL);
-  if (dev_id < 0) 
+  int dev_hci_id = hci_get_route(NULL);
+  if (dev_hci_id < 0) 
   {
-    fprintf(stderr, "Failed get default hci\n");
+    fprintf(stderr, "Failed to get default bluetooth device hci id.\n");
     return 1;
   }
 
   struct hci_dev_info dev_info = {0};
-  if (hci_devinfo(dev_id, &dev_info) < 0)
+  if (hci_devinfo(dev_hci_id, &dev_info) < 0)
   {
-    fprintf(stderr, "Failed default hci information\n");
+    fprintf(stderr, "Failed to get default bluetooth device information.\n");
     return 1;
   }
 
-  // should give something similar to $(hcitool dev)
-  printf("%s\n", dev_info.name);
+  char object_path[64] = {0};
+  strcpy(object_path, "/org/bluez/");
+  strcat(object_path, dev_info.name);
 
-  DBusError dbus_error;
-  dbus_error_init(&dbus_error);
+  GList *list;
+  GMainLoop *loop;
+
+  GError *err = NULL;
+  GDBusConnection *gdbus_conn = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &err);
+  if (gdbus_conn == NULL)
+  {
+    fprintf(stderr, "Failed to connect to DBus system bus (%s).\n", err->message);
+    
+    return 1;
+  }
+
+  // Listen to signal PropertiesChanged from any object indicated by NULL (this has to be the case as any device)
+  int subscription_id = g_dbus_connection_signal_subscribe(gdbus_conn, "org.bluez", "org.freedesktop.DBus.Properties",
+      "PropertiesChanged", NULL, NULL, G_DBUS_SIGNAL_FLAGS_NONE, on_remote_device_detection, NULL, NULL);
+
+
+#define BUS_NAME "org.bluez"
+#define INTERFACE_NAME "org.bluez.Adapter1"
 
   // DBUS_BUS_SESSION will make bluez unknown
-  DBusConnection *connection = dbus_bus_get(DBUS_BUS_SYSTEM, &dbus_error); 
-  if (dbus_error_is_set(&dbus_error))
-  {
-    fprintf(stderr, "error: %s\n", dbus_error.message);
-    return 1;
-  }
 
   // IMPORTANT(Ryan): By default, we cannot register a name on the system bus
   // So, must create a policy file in /etc/dbus-1/system.d/my.bluetooth.client.conf 
@@ -53,45 +92,15 @@ main(int argc, char *argv[])
 
       </busconfig>
    */
-  int ret = dbus_bus_request_name(connection, "my.bluetooth.client",
-      DBUS_NAME_FLAG_REPLACE_EXISTING, &dbus_error);
-  if (dbus_error_is_set(&dbus_error))
-  {
-    fprintf(stderr, "error: %s\n", dbus_error.message);
-    return 1;
-  }
 
   // server, object, interface, method
-  DBusMessage *request = dbus_message_new_method_call("org.bluez", "/org/bluez/hci0", 
-      "org.bluez.Adapter1", "StartDiscovery");
-  if (request == NULL)
-  {
-    fprintf(stderr, "error in new method call\n");
-    return 1;
-  }
 
   // signal (broadcast), METHOD_CALL returns METHOD_RETURN or ERROR
   
   // interface = org.bluez.Adapter1
   // object = /org/bluez/${dev_info.name}
 
-  // THIS LISTENS TO A NEW DEVICE ADDED
-  //while (1)
-  //{
-  //  // non blocking
-  //  dbus_connection_read_write(connection, 0); 
-  //  DBusMessage *msg = dbus_connection_pop_message(connection);
-  //  // loop until message
-  //  if (msg == NULL) continue;
-
-  //  if (dbus_message_is_method_call(msg, "org.freedesktop.DBus.Properties", "PropertiesChanged"))
-  //  {
-
-  //  }
-
-  //}
-
-  return 0;
+   return 0;
 }
 
 // dbus built on-top of low-level IPCs like shared memory and sockets
